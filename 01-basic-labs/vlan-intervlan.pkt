@@ -1,0 +1,86 @@
+---
+
+## 🔹 VLAN & Inter-VLAN Routing Lab
+
+This lab demonstrates **VLAN segmentation** and **Router-on-a-Stick Inter-VLAN routing** using a single router and switch.  
+
+### 📌 Topology Overview
+
+[PC1] VLAN 10
+[SW1]----[R1]----[PC3 - Management]
+[PC2] VLAN 20 /
+
+
+- **VLAN 10:** 192.168.10.0/24  
+- **VLAN 20:** 192.168.20.0/24  
+- **Router (sub-interfaces):** 192.168.10.1 & 192.168.20.1  
+
+---
+
+### 🔧 Configuration
+
+#### SW1 Configuration
+```bash
+enable
+conf t
+hostname SW1
+
+# Create VLANs
+vlan 10
+ name Sales
+vlan 20
+ name IT
+
+# Assign ports
+int fa0/1
+ switchport mode access
+ switchport access vlan 10
+
+int fa0/2
+ switchport mode access
+ switchport access vlan 20
+
+int fa0/24
+ switchport mode trunk
+
+
+R1 Configuration
+enable
+conf t
+hostname R1
+
+int g0/0
+ no shut
+
+# Sub-interfaces for VLANs
+int g0/0.10
+ encapsulation dot1Q 10
+ ip address 192.168.10.1 255.255.255.0
+
+int g0/0.20
+ encapsulation dot1Q 20
+ ip address 192.168.20.1 255.255.255.0
+
+
+✅ Verification
+
+Assign IPs:
+
+PC1 → 192.168.10.10 /24, Gateway 192.168.10.1
+
+PC2 → 192.168.20.10 /24, Gateway 192.168.20.1
+
+Ping Tests:
+
+PC1 → PC2 (should succeed via Router-on-a-Stick).
+
+PC1/PC2 → Router sub-interfaces (should succeed).
+
+
+🚀 How to Use
+
+Open vlan-intervlan.pkt in Cisco Packet Tracer.
+
+Configure using commands above.
+
+Test pings between PCs.
